@@ -1,0 +1,9 @@
+cffi==1.14.6
+cryptography==3.4.7
+fastapi==0.68.0
+jwt==1.2.0
+passlib==1.7.4
+pycparser==2.20
+pydantic==1.8.2
+starlette==0.14.2
+typing-extensions==3.10.0.0

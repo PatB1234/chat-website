@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="col">
+        
+            <div align = "center">
+
+                <h1 class = "h3 mb-3 fw-normal">
+
+                    <span id = "user">Anonymous</span> in <span id = "room">Public</span> Room
+                </h1>
+            </div>
+
+            <div class = "form-floating" style = "padding-top: 10px">
+
+                <input type = "text" class = "form-control" id = "new_room" onkeyup = "setRoom(event)">
+                <label for = "new_room">Room</label>
+            </div>
+
+            <textarea class = "form-control" id = "messages" style = "height: 500px; resize: none" readonly></textarea>
+
+            <div class = "form-floating" style = "padding-top: 10px">
+            
+                <input type = "text" class = "form-control" id = "message" onkeyup= "sendMessage(event)">
+                <label for = "message">Message</label>
+            </div>
+
+        </div>
+      </div>
+
+    <script src = "https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src = "cookie.min.js"></script>
+    <script>
+
+        const token = Cookies.get('token');
+        const elements = {
+
+            room: document.getElementById('room'),
+            rooms: document.getElementById('rooms'),
+            message: document.getElementById('message'),
+            messages: document.getElementById('messages'),
+            user: document.getElementById('user'),
+            headers: { 'headers': { 'Authorization': `Bearer ${token}` } }        
+        }
+        
+        getMessages();
+        setInterval(() => {
+
+            getMessages(); 
+        }, 5000);
+
+        function setRoom(event) {
+
+            if (event.keyCode == 13) {
+
+                elements.room.innerHTML = new_room.value;
+
+            }
+        }
+
+        setUser();        
+        function setUser() {
+
+            axios.get('/user', elements.headers)
+                .then(function (response) {
+
+                    elements.user.innerHTML = response.data
+                })
+
+                .catch(function (error) {
+
+                    console.log(error);
+                })
+        }
+
+        function getMessages(event) {
+
+            axios.get(`/message/${elements.room.innerHTML}`, elements.headers)
+            .then(function (response) {
+                elements.messages.innerHTML = response.data.map((v) => {
+
+                    return ` [${v[2]}] ${v[3]}`
+                
+                }).join("\n")
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+
+        function sendMessage(event) {
+
+            if (event.keyCode == 13) {
+                axios.post(`/message/${elements.room.innerHTML}`, { 'message' : message.value }, elements.headers)
+                    .then(function (response) {
+
+                    elements.message.value = "";
+                    })
+
+                    .catch(function (error) {
+
+                        console.log(error);
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
