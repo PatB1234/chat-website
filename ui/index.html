@@ -89,7 +89,7 @@
             .then(function (response) {
                 elements.messages.innerHTML = response.data.map((v) => {
 
-                    return ` [${v[2]}] ${v[3]}`
+                    return ` [${v[0]} ${v[1]} ${v[2]}] ${v[3]}`
                 
                 }).join("\n")
             })
