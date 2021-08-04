@@ -40,6 +40,17 @@ def post_login(username: str = Form(...), password: str = Form(...)):
     else:
         return RedirectResponse("/ui/login.html?error=True", status.HTTP_302_FOUND)
 
+@app.post("/admin_login")
+def post_admin_login(username: str = Form(...), password: str = Form(...)):
+    UserData.user = username
+    UserData.password = password
+    if  verify_admin(UserData):
+        response = RedirectResponse("/ui/admin.html", status.HTTP_302_FOUND)
+        response.set_cookie(key = "token", value = get_admin_token(username))
+        return response
+    else:
+        return RedirectResponse("/ui/login.html?error=True", status.HTTP_302_FOUND)
+
 @app.get("/message/{room}")
 def get_message(room: str, username = Depends(get_user)):
 

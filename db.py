@@ -88,3 +88,28 @@ def get_user_token(username):
     }
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+
+def create_admin(user_data):
+
+    database = driver.connect(DATABASE_URL)
+    cursor = database.cursor()
+    cursor.execute(f"INSERT INTO ADMIN (Email, Password) VALUES ('{user_data.user}', '{get_enc_password(user_data.password)}'); ")
+    database.commit()
+
+def verify_admin(user_data:UserData):
+
+    database = driver.connect(DATABASE_URL)
+    cursor = database.cursor()
+    result =  cursor.execute(f"SELECT Password FROM admin WHERE Email='{user_data.user}';")
+    res = result.fetchall()
+    if res:
+        return verify_password(UserData.password, res[0][0])
+    return False
+
+def get_admin_token(username):
+
+    to_encode = {
+
+        'user' : username,
+        'expiry' : str(datetime.utcnow() + timedelta(minutes = 15))
+    }
