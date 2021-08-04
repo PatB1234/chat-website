@@ -19,6 +19,10 @@ def get_user(token = Depends(oath2_scheme)):
     user = get_user_from_token(token)
     return get_user_from_token(token)
 
+@app.get("/admin")
+def get_admin(token = Depends(oath2_scheme)):
+    admin = get_admin_from_token
+    return get_admin_from_token
 
 @app.get("/Clear")
 def clear_db():
@@ -38,7 +42,7 @@ def post_login(username: str = Form(...), password: str = Form(...)):
         response.set_cookie(key = "token", value = get_user_token(username))
         return response
     else:
-        return RedirectResponse("/ui/login.html?error=True", status.HTTP_302_FOUND)
+        return RedirectResponse("/ui/404.html", status.HTTP_302_FOUND)
 
 @app.post("/admin_login")
 def post_admin_login(username: str = Form(...), password: str = Form(...)):
@@ -49,10 +53,19 @@ def post_admin_login(username: str = Form(...), password: str = Form(...)):
         response.set_cookie(key = "token", value = get_admin_token(username))
         return response
     else:
-        return RedirectResponse("/ui/login.html?error=True", status.HTTP_302_FOUND)
+        return RedirectResponse("/ui/404.html", status.HTTP_302_FOUND)
+
+def no_admin_token():
+    
+    response = RedirectResponse("/ui/404.html", status.HTTP_302_FOUND)
 
 @app.get("/message/{room}")
 def get_message(room: str, username = Depends(get_user)):
 
     return get_message_from_room(room)
+
+@app.post("/error")
+def auth_error():
+
+    return RedirectResponse("/ui/404.html", status.HTTP_302_FOUND)
 

@@ -113,3 +113,8 @@ def get_admin_token(username):
         'user' : username,
         'expiry' : str(datetime.utcnow() + timedelta(minutes = 15))
     }
+
+def get_admin_from_token(token):
+
+    payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
+    return payload.get("user")
