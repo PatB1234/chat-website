@@ -43,6 +43,5 @@ def post_login(username: str = Form(...), password: str = Form(...)):
 @app.get("/message/{room}")
 def get_message(room: str, username = Depends(get_user)):
 
-    print(get_message_from_room(room))    
     return get_message_from_room(room)
 
