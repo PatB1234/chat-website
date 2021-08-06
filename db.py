@@ -29,6 +29,8 @@ def create_tables():
     cursor = database.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS MESSAGES (ROOM TEXT, DATE TEXT, NAME TEXT, MESSAGE TEXT);")
     cursor.execute("CREATE TABLE IF NOT EXISTS USERS (PhoneNumber TEXT, Password TEXT);")
+    cursor.execute("CREATE TABLE IF NOT EXISTS BANNEDUSERS (PhoneNumber TEXT);")
+    cursor.execute("CREATE TABLE IF NOT EXISTS ADMIN (Email TEXT, Password TEXT);")
 
 def clear_table():
     database = driver.connect(DATABASE_URL)
@@ -58,13 +60,19 @@ def verify_password(plain_password, hashed_password):
 def verify_user(user_data:UserData):
     database = driver.connect(DATABASE_URL)
     cursor = database.cursor()
-    result =  cursor.execute(f"SELECT Password FROM users WHERE PhoneNumber='{user_data.user}';")
-    res = result.fetchall()
-    if res:
-        return verify_password(UserData.password, res[0][0])
+    banned = cursor.execute(f"SELECT PhoneNumber FROM  BANNEDUSERS WHERE PhoneNumber = '{user_data.user}'")
+    banned = banned.fetchall()
+    if (user_data.user not in banned[0]):
+
+        result =  cursor.execute(f"SELECT Password FROM users WHERE PhoneNumber='{user_data.user}';")
+        res = result.fetchall()
+
+        if res:
+            return verify_password(UserData.password, res[0][0])
+        else:
+            create_user(user_data)
     else:
-        create_user(user_data)
-    return False
+        return False
 
 def get_message_from_room(room):
     
@@ -118,3 +126,11 @@ def get_admin_from_token(token):
 
     payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
     return payload.get("user")
+
+def update_banned_user(user_data):
+
+    database = driver.connect(DATABASE_URL)
+    cursor = database.cursor()
+    cursor.execute(f"INSERT INTO BANNEDUSERS (PhoneNumber) VALUES ('{user_data}'); ")
+    database.commit()
+

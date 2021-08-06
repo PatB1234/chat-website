@@ -43,6 +43,11 @@ def post_login(username: str = Form(...), password: str = Form(...)):
         return response
     else:
         return RedirectResponse("/ui/404.html", status.HTTP_302_FOUND)
+        
+@app.post("/ban")
+def ban_user(username: str = Form(...)):
+
+    update_banned_user(username)
 
 @app.post("/admin_login")
 def post_admin_login(username: str = Form(...), password: str = Form(...)):

@@ -9,39 +9,15 @@
     <link href = "style.css" rel = "stylesheet">
 </head>
 <body>
-    
+    <form method="post" action="/ban">
+
+        <h1 class="h3 mb-3 fw-normal">Please ban a person in</h1>
+        <label for="inputEmail" class="visually-hidden">Email address</label>
+        <input name="username" type="email" id="inputEmail" class="form-control" placeholder="Email address"required autofocus>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">BAN</button>
+    </form>
+
     <script src = "https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src = "cookie.min.js"></script>
-    <script>
-
-        const token = Cookies.get('token');
-        
-        elements = {
-
-            headers: { 'headers': { 'Authorization': `Bearer ${token}` } }        
-        }
-
-        checkAdminCookies()
-        function checkAdminCookies() {
-
-            axios.get('/admin', token)
-            .then(function (response) {
-
-                if (token != "") {
-
-                console.log("Pass")
-                } else {
-
-                console.log("Bye Bye!")
-                axios.post("/error")
-                }
-            })
-            .catch(function (error) {
-
-            console.log(error);
-            })
-
-        }
-    </script>
 </body>
 </html>
