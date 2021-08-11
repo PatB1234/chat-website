@@ -62,7 +62,7 @@ def verify_user(user_data:UserData):
     cursor = database.cursor()
     banned = cursor.execute(f"SELECT PhoneNumber FROM  BANNEDUSERS WHERE PhoneNumber = '{user_data.user}'")
     banned = banned.fetchall()
-    if (user_data.user not in banned[0]):
+    if (not banned) or (user_data.user not in banned[0]):
 
         result =  cursor.execute(f"SELECT Password FROM users WHERE PhoneNumber='{user_data.user}';")
         res = result.fetchall()
@@ -112,6 +112,7 @@ def verify_admin(user_data:UserData):
     res = result.fetchall()
     if res:
         return verify_password(UserData.password, res[0][0])
+
     return False
 
 def get_admin_token(username):
