@@ -5,6 +5,7 @@ from typing import Optional
 import os, jwt
 from passlib.context import CryptContext
 from datetime import date, datetime, timedelta
+import random
 
 DATABASE_URL = 'db/ChatApp.db'
 class ChatData(BaseModel):
@@ -62,7 +63,7 @@ def verify_user(user_data:UserData):
     cursor = database.cursor()
     banned = cursor.execute(f"SELECT PhoneNumber FROM  BANNEDUSERS WHERE PhoneNumber = '{user_data.user}'")
     banned = banned.fetchall()
-    if (not banned) or (user_data.user not in banned[0]):
+    if not banned or (user_data.user not in banned[0]):
 
         result =  cursor.execute(f"SELECT Password FROM users WHERE PhoneNumber='{user_data.user}';")
         res = result.fetchall()
@@ -112,7 +113,6 @@ def verify_admin(user_data:UserData):
     res = result.fetchall()
     if res:
         return verify_password(UserData.password, res[0][0])
-
     return False
 
 def get_admin_token(username):
@@ -135,3 +135,14 @@ def update_banned_user(user_data):
     cursor.execute(f"INSERT INTO BANNEDUSERS (PhoneNumber) VALUES ('{user_data}'); ")
     database.commit()
 
+def gen_pwd(username, password):
+
+    database = driver.connect(DATABASE_URL)
+    cursor = database.cursor()
+    password = random.randint(0, 99999999)
+    unHashedPassword = password
+    password = get_enc_password(str(password))
+    cursor.execute(f"DELETE FROM USERS WHERE PhoneNumber = ('{username}')")
+    cursor.execute(f"INSERT INTO USERS VALUES ('{username}', '{password}')")
+    database.commit()
+    return unHashedPassword

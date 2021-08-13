@@ -15,11 +15,10 @@
     <main class="form-signin">
         <form method="post" action="/login">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-            <label for="inputEmail" class="visually-hidden">Email address</label>
             <input name="username" type="email" id="inputEmail" class="form-control" placeholder="Email address"required autofocus>
-            <label for="inputPassword" class="visually-hidden">Password</label>
             <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <input class="w-100 btn btn-lg btn-primary" type="submit" value = "signin" name="action"></input>
+            <input class="w-100 btn btn-lg btn-primary" type="submit" value="forgot" name="action"></input>
         </form>
         <br/>
         <br/>
@@ -42,6 +41,7 @@
         if (isError) {
             error.style.display = "block"
         }
+
     </script>
 </body>
 </html>
